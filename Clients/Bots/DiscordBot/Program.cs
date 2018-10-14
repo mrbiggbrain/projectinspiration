@@ -35,7 +35,7 @@ namespace DiscordBot
             {
                 CaseSensitiveCommands = true,
                 DefaultRunMode = RunMode.Async,
-                LogLevel = LogSeverity.Debug
+                LogLevel = LogSeverity.Info
             });
 
             // Subscribe to MessageRecived events.
@@ -69,6 +69,7 @@ namespace DiscordBot
         private async Task Client_Ready()
         {
             await client.SetGameAsync("ProjectInspiration - DnD Bot");
+            await client.SetStatusAsync(UserStatus.Online);
         }
 
         private async Task Client_MessageReceived(SocketMessage messageParam)

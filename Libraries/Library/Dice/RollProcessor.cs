@@ -1,4 +1,5 @@
-﻿using ProjectInspiration.Library.Dice.Models;
+﻿using ProjectInspiration.Library.Dice.Exceptions;
+using ProjectInspiration.Library.Dice.Models;
 using ProjectInspiration.Library.Dice.Models.Request;
 using ProjectInspiration.Library.Dice.Models.Responce;
 using System;
@@ -8,10 +9,24 @@ using System.Text;
 
 namespace ProjectInspiration.Library.Dice
 {
+    /// <summary>
+    /// 
+    /// </summary>
     public static class RollProcessor
     {
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
         static public RollResult Roll(RollRequest request)
         {
+            // Checks and Throws
+            if(request == null)
+                throw new ArgumentNullException("Request can not be null.");
+            if (request.RollText == null)
+                throw new ArgumentException($"The request contained empty RollText.");
+
             List<IResultSet> sets = new List<IResultSet>();
 
             // Remove whitepace
@@ -26,6 +41,12 @@ namespace ProjectInspiration.Library.Dice
             return new RollResult(sets);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="section"></param>
+        /// <param name="mod"></param>
+        /// <returns></returns>
         static private IResultSet ProcessSection(string section, int mod)
         { 
             if (int.TryParse(section, out int result))
@@ -45,10 +66,15 @@ namespace ProjectInspiration.Library.Dice
                         {
                             return GenerateDiceRollSet(sides, count, mod);
                         }
+                        else
+                        {
+                            throw new RollParseException($"Invalid roll section: {section} (Missing Sides)");
+                        }
                     }
-
-                    throw new ArgumentException();
-
+                    else
+                    {
+                        throw new RollParseException($"Invalid roll section: {section} (Missing Count)");
+                    }  
                 }
                 else
                 {
@@ -57,11 +83,23 @@ namespace ProjectInspiration.Library.Dice
             }
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="result"></param>
+        /// <returns></returns>
         static private StaticSet GenerateStaticSet(int result)
         {
             return new StaticSet(result);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="sides"></param>
+        /// <param name="count"></param>
+        /// <param name="mod"></param>
+        /// <returns></returns>
         static private DiceRollSet GenerateDiceRollSet(int sides, int count, int mod)
         {
             List<DiceRoll> rolls = new List<DiceRoll>();
@@ -74,12 +112,23 @@ namespace ProjectInspiration.Library.Dice
             return new DiceRollSet(rolls);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="sides"></param>
+        /// <param name="mod"></param>
+        /// <returns></returns>
         static private DiceRoll GenerateDiceRoll(int sides, int mod)
         {
             int result = (new Random()).Next(1, sides + 1);
             return new DiceRoll(sides, result * mod);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="text"></param>
+        /// <returns></returns>
         static private List<(String text, int mod)> GetMappingTable(string text)
         {
             var table = new List<(string text, int mod)>();
@@ -107,6 +156,11 @@ namespace ProjectInspiration.Library.Dice
 
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="text"></param>
+        /// <returns></returns>
         static private List<int> GetMods(String text)
         {
             var positions = GetSepPositions(text);
@@ -120,6 +174,11 @@ namespace ProjectInspiration.Library.Dice
             return mods;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="text"></param>
+        /// <returns></returns>
         static private List<int> GetSepPositions(string text)
         {
             List<int> indexes = new List<int>();
@@ -132,6 +191,12 @@ namespace ProjectInspiration.Library.Dice
             }
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="text"></param>
+        /// <param name="pos"></param>
+        /// <returns></returns>
         static private List<char> ExtractChars(string text, List<int> pos)
         {
             var chars = new List<char>();
@@ -144,6 +209,11 @@ namespace ProjectInspiration.Library.Dice
             return chars;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="chars"></param>
+        /// <returns></returns>
         static private List<int> ConvertCharListToModList(List<char> chars)
         {
             var mods = new List<int>();
@@ -156,6 +226,11 @@ namespace ProjectInspiration.Library.Dice
             return mods;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="c"></param>
+        /// <returns></returns>
         static private int ConvertCharToMod(char c)
         {
             if (c == '+') return 1;

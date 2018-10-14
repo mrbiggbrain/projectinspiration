@@ -35,6 +35,9 @@ namespace DiscordBot.Commands
             {
                 // Output errors with JSON serialization/Deserialization
                 Console.WriteLine($"Issue: {e.Message}");
+
+                // Need to create a new exception. 
+                throw;
             }
 
             // Create a builder to construct the output. 
