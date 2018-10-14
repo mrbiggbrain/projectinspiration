@@ -13,4 +13,8 @@
     <ProjectReference Include="..\Libraries\Library\Library.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Shared\Web\" />
+  </ItemGroup>
+
 </Project>

@@ -1,4 +1,6 @@
 ﻿using ProjectInspiration.Library.Dice.Models;
+using ProjectInspiration.Library.Dice.Models.Request;
+using ProjectInspiration.Library.Dice.Models.Responce;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,21 +10,7 @@ namespace ProjectInspiration.Library.Dice
 {
     public static class RollProcessor
     {
-        //static public RollResponce Roll(RollRequest request)
-        //{
-        //    IEnumerable<String> setStrings = request.RollText.Replace(" ", "").Split('+');
-
-        //    List<IResultSet> sets = ProcessSections(setStrings);
-
-        //    return new RollResponce(sets);
-        //}
-
-        //static private List<IResultSet> ProcessSections(IEnumerable<String> sections)
-        //{
-        //    return sections.Select(section => ProcessSection(section)).ToList();
-        //}
-
-        static public RollResponce Roll(RollRequest request)
+        static public RollResult Roll(RollRequest request)
         {
             List<IResultSet> sets = new List<IResultSet>();
 
@@ -35,7 +23,7 @@ namespace ProjectInspiration.Library.Dice
                 sets.Add(ProcessSection(m.text, m.mod));
             }
 
-            return new RollResponce(sets);
+            return new RollResult(sets);
         }
 
         static private IResultSet ProcessSection(string section, int mod)

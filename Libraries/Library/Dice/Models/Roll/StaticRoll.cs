@@ -1,10 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using Newtonsoft.Json;
 
 namespace ProjectInspiration.Library.Dice.Models
 {
-    class StaticValue : IRoll
+    class StaticRoll : IRoll
     {
         int value;
 
@@ -12,7 +13,8 @@ namespace ProjectInspiration.Library.Dice.Models
 
         public int Sides => int.MaxValue;
 
-        public StaticValue(int value)
+        [JsonConstructor]
+        public StaticRoll(int value)
         {
             this.value = value;
         }

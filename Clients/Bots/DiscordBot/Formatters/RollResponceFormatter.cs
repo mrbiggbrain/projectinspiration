@@ -1,4 +1,5 @@
 ﻿using ProjectInspiration.Library.Dice.Models;
+using ProjectInspiration.Library.Dice.Models.Responce;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,7 +9,7 @@ namespace DiscordBot.Formatters
 {
     static class RollResponceFormatter
     {
-        public static String Format(RollResponce responce)
+        public static String Format(IRollResult responce)
         {
             String str = "";
 

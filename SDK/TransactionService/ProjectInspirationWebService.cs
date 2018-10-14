@@ -1,30 +1,37 @@
 ﻿using Newtonsoft.Json;
+using ProjectInspiration.SDK.Shared.TransactionService;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Net;
 using System.Text;
 
-
-namespace ProjectInspiration.SDK.Shared.Web
+namespace ProjectInspiration.SDK.Shared.TransactionService
 {
-    static class APIRequestor
+    public class ProjectInspirationWebService : ITransactionService
     {
-        //static T Get<T>(IServiceObject service, String controller, String action)
-        //{
-        //
-        //}
 
-        public static T Post<T,O>(IServiceObject service, String controller, String action, O obj)
+        private string baseAPIPath;
+        private string apiKey;
+
+        public ProjectInspirationWebService(String baseAPIPath, String apiKey)
         {
-            return Post<T>(service, controller, action, JsonConvert.SerializeObject(obj, Formatting.Indented));
+            this.baseAPIPath = baseAPIPath;
+            this.apiKey = apiKey;
         }
 
-        public static T Post<T>(IServiceObject service, String controller, String action, String JSON)
+        public T Get<T>(string controller = null, string action = null, IEnumerable<ITransactionParameter> parama = null)
         {
-            HttpWebRequest request = (HttpWebRequest)WebRequest.Create(APIPath(service.ServiceRoot, controller, action));
+            throw new NotImplementedException();
+        }
+
+        public T Post<T, O>(O obj, string controller = null, string action = null, IEnumerable<ITransactionParameter> parama = null)
+        {
+            HttpWebRequest request = (HttpWebRequest)WebRequest.Create(APIPath(this.baseAPIPath, controller, action));
             request.Method = "POST";
-            request.Headers.Add("APIKEY", service.APIKey);
+            request.Headers.Add("APIKEY", this.apiKey);
+
+            String JSON = JsonConvert.SerializeObject(obj, Formatting.Indented);
 
             System.Text.UTF8Encoding encoding = new System.Text.UTF8Encoding();
             Byte[] byteArray = encoding.GetBytes(JSON);
@@ -45,7 +52,16 @@ namespace ProjectInspiration.SDK.Shared.Web
                     {
                         StreamReader reader = new StreamReader(responseStream, System.Text.Encoding.UTF8);
                         //return reader.ReadToEnd();
-                        return JsonConvert.DeserializeObject<T>(reader.ReadToEnd());
+
+                        String content = reader.ReadToEnd();
+
+                        var settings = new JsonSerializerSettings()
+                        {
+                            TypeNameHandling = TypeNameHandling.All
+                        };
+
+                        Console.WriteLine(content);
+                        return JsonConvert.DeserializeObject<T>(content, settings);
                     }
                 }
             }
@@ -59,11 +75,11 @@ namespace ProjectInspiration.SDK.Shared.Web
         static public String APIPath(String servicePath, String controller, String action)
         {
             String finalAddress = servicePath;
-            if(!String.IsNullOrEmpty(controller))
+            if (!String.IsNullOrEmpty(controller))
             {
                 finalAddress += $"/{controller}";
 
-                if(!String.IsNullOrEmpty(action))
+                if (!String.IsNullOrEmpty(action))
                 {
                     finalAddress += $"/{action}";
                 }

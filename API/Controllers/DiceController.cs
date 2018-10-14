@@ -2,6 +2,8 @@
 using Microsoft.AspNetCore.Mvc;
 using ProjectInspiration.Library.Dice.Models;
 using ProjectInspiration.Library.Dice;
+using ProjectInspiration.Library.Dice.Models.Request;
+using Newtonsoft.Json;
 
 namespace WebAPI.Controllers
 {
@@ -27,7 +29,13 @@ namespace WebAPI.Controllers
         [HttpPost]
         public JsonResult Post([FromBody] RollRequest request)
         {
-            return new JsonResult(RollProcessor.Roll(request));
+
+            var settings = new JsonSerializerSettings()
+            {
+                TypeNameHandling = TypeNameHandling.All
+            };
+
+            return new JsonResult(RollProcessor.Roll(request), settings);
         }
 
         // PUT: api/Dice/5
