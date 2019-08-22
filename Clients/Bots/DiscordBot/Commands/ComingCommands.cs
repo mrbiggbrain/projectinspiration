@@ -4,9 +4,9 @@ using System.Threading.Tasks;
 using System.Text;
 using Discord;
 using Discord.Commands;
-using ProjectInspiration.SDK.Dice;
-using ProjectInspiration.Library.Dice.Models;
-using ProjectInspiration.Library.Dice;
+//using ProjectInspiration.SDK.Dice;
+//using ProjectInspiration.Library.Dice.Models;
+//using ProjectInspiration.Library.Dice;
 
 namespace DiscordBot.Commands
 {
