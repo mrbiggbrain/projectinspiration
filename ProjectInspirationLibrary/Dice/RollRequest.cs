@@ -25,12 +25,19 @@ namespace ProjectInspirationLibrary.Dice
         internal List<RollResult> Roll()
         {
 
+
             List<RollResult> results = new List<RollResult>();
             Random random = new Random();
+
+            if(this.count == 0)
+            {
+                results.Add(new RollResult(sides * Negative, sides));
+            }
 
             foreach(int i in Enumerable.Range(1, count))
             {
                 int roll = (random.Next(sides) + 1) * Negative;
+
 
                 results.Add(new RollResult(roll, sides));
             }

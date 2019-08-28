@@ -37,25 +37,33 @@ namespace ProjectInspirationLibrary.Dice.Parser
         {
             String[] table = v.Split('d');
 
-            int count = 1;
+            int count = 0;
             int sides = 20;
             
-            // Parse Sides
+            // Parse count
             if(table.Length > 0)
             {
                 if(Int32.TryParse(table[0], out count))
                 {
                     // parsed;
-                }      
-            }
+                }
 
-            if(table.Length > 1)
-            {
-                if (Int32.TryParse(table[1], out sides))
+                // Parse sides
+                if (table.Length > 1)
                 {
-                    // parsed;
+                    if (Int32.TryParse(table[1], out sides))
+                    {
+                        // parsed;
+                    }
+                }
+                else
+                {
+                    sides = count;
+                    count = 0;
                 }
             }
+
+            
 
             return (count, sides);
         }
