@@ -19,6 +19,8 @@ namespace DiscordBot.Commands
 
             var totalSum = result.Sum(x => x.Sum(y => y.result));
 
+
+
             // Create a builder to construct the output. 
             EmbedBuilder builder = new EmbedBuilder();
 

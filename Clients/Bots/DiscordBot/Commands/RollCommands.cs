@@ -7,6 +7,7 @@ using Discord.Commands;
 using ProjectInspirationLibrary.Dice;
 using System.Linq;
 using ProjectInspirationLibrary.Dice.Parser;
+using ProjectInspirationLibrary.Dice.Formater;
 
 namespace DiscordBot.Commands
 {
@@ -19,7 +20,11 @@ namespace DiscordBot.Commands
             RollBuilder build = RollParser.Parse(rollText);
             var result = build.Roll();
 
-            var totalSum = result.Sum(x => x.Sum(y => y.result));
+            
+
+            string display = RollFormater.Format(result);
+
+            
 
             // Create a builder to construct the output. 
             EmbedBuilder builder = new EmbedBuilder();
@@ -31,7 +36,7 @@ namespace DiscordBot.Commands
             builder.WithColor(Color.Red);
 
             // Set the description to show results. 
-            builder.WithDescription($"{Context.User.Mention} Rolled a {totalSum}!");
+            builder.WithDescription($"{Context.User.Mention}: {display}");
 
             // Post the embed to the channel
             await Context.Channel.SendMessageAsync("", embed: builder.Build());
