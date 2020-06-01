@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using ProjectInspirationLibrary.Dice.Parser;
 
 namespace ProjectInspirationLibrary.Dice
 {
@@ -8,6 +9,7 @@ namespace ProjectInspirationLibrary.Dice
     {
         public int result;
         public int max;
+        public bool valid = false;
 
         public RollResult(int result, int max)
         {

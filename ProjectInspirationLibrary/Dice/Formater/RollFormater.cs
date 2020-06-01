@@ -27,9 +27,11 @@ namespace ProjectInspirationLibrary.Dice.Formater
                     if (y > 0) display += ", ";
 
                     if (roll.IsCrit()) display += "**";
+                    if (!roll.valid) display += "~~";
 
                     display += $"{roll.result}";
 
+                    if (!roll.valid) display += "~~";
                     if (roll.IsCrit()) display += "**";
 
                     y++;
@@ -39,7 +41,8 @@ namespace ProjectInspirationLibrary.Dice.Formater
                 i++;
             }
 
-            var totalSum = result.Sum(x => x.Sum(y => y.result));
+            var totalSum = result.Sum(x => x.Where(y => y.valid).Sum(z => z.result));
+            // var totalSum = result.Sum(x => x.Sum(y => y.result));
 
             display += $" = {totalSum}";
 

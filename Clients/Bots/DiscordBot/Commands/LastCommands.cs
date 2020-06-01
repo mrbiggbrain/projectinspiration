@@ -11,21 +11,39 @@ using ProjectInspirationLibrary.Dice.Formater;
 
 namespace DiscordBot.Commands
 {
-    public class RollCommands : ModuleBase<SocketCommandContext>
+    public class LastCommands : ModuleBase<SocketCommandContext>
     {
-        [Command("roll"), Alias("r"), Summary("Roll Command")]
-        public async Task Roll([Remainder]String rollText = null)
+        [Command("last"), Alias("l"), Summary("last roll")]
+        public async Task Last([Remainder]String userText = null)
         {
 
-            if (String.IsNullOrEmpty(rollText)) rollText = "1d20";
+            Console.WriteLine("LAST");
 
-            RollBuilder build = RollParser.Parse(rollText);
-            var result = build.Roll();
+            String user = ((IGuildUser)Context.User).Nickname;
 
-            RollSaver.Instance.Save(((IGuildUser)Context.User).Nickname, result);
+            String display = "";
 
+            if(!String.IsNullOrEmpty(userText))
+            {
+                user = userText.Replace("@", String.Empty);
+            }
 
-            string display = RollFormater.Format(result);
+            
+
+            var data = RollSaver.Instance.Load(user);
+
+            
+
+            Console.WriteLine("PRE");
+            if (data == null)
+            {
+                display = $"No Roll Data to load for {user}";
+            }
+            else
+            {
+                display = RollFormater.Format(data);
+            }
+            Console.WriteLine("POST");
 
             // Create a builder to construct the output. 
             EmbedBuilder builder = new EmbedBuilder();
@@ -44,6 +62,8 @@ namespace DiscordBot.Commands
 
             // Delete the requesting message
             //await Context.Message.DeleteAsync();
+
+            Console.WriteLine("END");
         }
     }
 }

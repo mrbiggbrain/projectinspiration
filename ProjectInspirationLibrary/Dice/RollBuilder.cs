@@ -14,9 +14,9 @@ namespace ProjectInspirationLibrary.Dice
         }
 
         // Add a request to the roller
-        public RollRequest AddRequest(int sign, int count, int sides)
+        public RollRequest AddRequest(int sign, int count, int sides, Parser.FilterType filterType, int filterValue)
         {
-            RollRequest request = new RollRequest(count, sides);
+            RollRequest request = new RollRequest(count, sides, filterType, filterValue);
             requests.Add(request);
             return request;
         }
