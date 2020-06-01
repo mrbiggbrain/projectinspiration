@@ -19,13 +19,16 @@ namespace DiscordBot.Commands
 
             Console.WriteLine("LAST");
 
-            String user = ((IGuildUser)Context.User).Nickname;
+            String user = Context.User.Mention;
 
             String display = "";
 
             if(!String.IsNullOrEmpty(userText))
             {
-                user = userText.Replace("@", String.Empty);
+                //user = userText.Replace("@", String.Empty);
+                user = Context.User.Mention;
+
+
             }
 
             

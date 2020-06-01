@@ -22,7 +22,8 @@ namespace DiscordBot.Commands
             RollBuilder build = RollParser.Parse(rollText);
             var result = build.Roll();
 
-            RollSaver.Instance.Save(((IGuildUser)Context.User).Nickname, result);
+            RollSaver.Instance.Save($"@<!{Context.User.Id}>", result);
+            Console.WriteLine($"@<!{Context.User.Id}>");
 
 
             string display = RollFormater.Format(result);

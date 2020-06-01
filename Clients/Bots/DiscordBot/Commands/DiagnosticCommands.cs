@@ -13,12 +13,6 @@ namespace DiscordBot.Commands
         public async Task Roll([Remainder]String rollText = null)
         {
 
-            RollBuilder build = new RollBuilder();
-            //build.AddRequest(1, 20);
-            var result = build.Roll();
-
-            var totalSum = result.Sum(x => x.Sum(y => y.result));
-
 
 
             // Create a builder to construct the output. 
@@ -31,7 +25,7 @@ namespace DiscordBot.Commands
             //builder.WithColor(Color.Red);
 
             // Set the description to show results. 
-            builder.WithDescription($"No current diagnostics to run on this version.");
+            builder.WithDescription($"@<!{Context.User.Id}>");
 
             // Post the embed to the channel
             await Context.Channel.SendMessageAsync("", embed: builder.Build());
