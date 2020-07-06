@@ -69,9 +69,11 @@ namespace DiscordBot.Commands
         /// </summary>
         /// <returns>A Task.</returns>
         [Command("death"), Alias("dth"), Summary("Death Save")]
-        public async Task Death()
+        public async Task Death([Remainder]string rollText = null)
         {
             List<List<RollResult>> result = RollCommands.BuildAndRoll("1d20");
+
+            string comment = RollParser.GetComment(rollText);
 
             // Create a builder to construct the output. 
             EmbedBuilder builder = new EmbedBuilder();
@@ -87,7 +89,8 @@ namespace DiscordBot.Commands
             string status = total >= 10 ? "Success" : "Failure";
 
             // Set the description to show results. 
-            builder.WithDescription($"{Context.User.Mention}: {total} = {status}");
+            builder.WithDescription($"{Context.User.Mention}: {total} = {status}")
+                   .WithTitle(comment);
 
             await Context.Channel.SendMessageAsync(string.Empty, embed: builder.Build());
         }
