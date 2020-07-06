@@ -14,6 +14,7 @@ namespace DiscordBot.Commands
     using Discord.Commands;
     using ProjectInspirationLibrary.Dice;
     using ProjectInspirationLibrary.Dice.Parser;
+    using ProjectInspirationLibrary.Flair.Comments;
 
     /// <summary>
     /// Discord commands for rolling dice.
@@ -90,7 +91,8 @@ namespace DiscordBot.Commands
 
             // Set the description to show results. 
             builder.WithDescription($"{Context.User.Mention}: {total} = {status}")
-                   .WithTitle(comment);
+                   .WithTitle(comment)
+                   .WithFooter($"{Context.User.Username} {Comments.DeathSaveComment(total > 10)}");
 
             await Context.Channel.SendMessageAsync(string.Empty, embed: builder.Build());
         }

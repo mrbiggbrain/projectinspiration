@@ -94,7 +94,7 @@ namespace ProjectInspirationLibrary.Dice.Parser
         {
             if (text == null)
             {
-                throw new ArgumentNullException(nameof(text));
+                text = string.Empty;
             }
 
             var a = text.Split("#");
