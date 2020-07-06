@@ -40,9 +40,14 @@ namespace DiscordBot
             return $"{setsText} = {totalSum}";
         }
 
+        /// <summary>
+        /// Used to output a bad roll request message.
+        /// </summary>
+        /// <param name="rollText">Text of the roll request.</param>
+        /// <param name="context">The context object for discord.</param>
+        /// <returns>A Task.</returns>
         public static async Task BadRollRequest(string rollText, SocketCommandContext context)
         {
-
             // Create a builder to construct the output. 
             EmbedBuilder builder = new EmbedBuilder();
 
@@ -56,12 +61,17 @@ namespace DiscordBot
             builder.WithDescription($"{context.User.Mention}: **{rollText}** does not look like a valid roll.");
 
             await context.Channel.SendMessageAsync(string.Empty, embed: builder.Build());
-
         }
 
-        public static async Task RollMessage(List<List<RollResult>> result, SocketCommandContext context)
+        /// <summary>
+        /// Used to output a standard roll message to discord.
+        /// </summary>
+        /// <param name="result">The results of the rolls.</param>
+        /// <param name="context">The context for discord.</param>
+        /// <returns>A task.</returns>
+        public static async Task RollMessage(List<List<RollResult>> result, string comment, SocketCommandContext context)
         {
-            EmbedBuilder builder = RollFormater.GenerateDiscordBuilder(result, context);
+            EmbedBuilder builder = RollFormater.GenerateDiscordBuilder(result, comment, context);
 
             // Post the embed to the channel
             await context.Channel.SendMessageAsync(string.Empty, embed: builder.Build());
@@ -73,7 +83,7 @@ namespace DiscordBot
         /// <param name="result">The results of various rolls.</param>
         /// <param name="context">The context of the original request.</param>
         /// <returns>A builder that is ready to be used.</returns>
-        public static EmbedBuilder GenerateDiscordBuilder(List<List<RollResult>> result, SocketCommandContext context)
+        public static EmbedBuilder GenerateDiscordBuilder(List<List<RollResult>> result, string comment, SocketCommandContext context)
         {
             string display = RollFormater.Format(result);
 
@@ -87,7 +97,8 @@ namespace DiscordBot
             builder.WithColor(Color.Red);
 
             // Set the description to show results. 
-            builder.WithDescription($"{context.User.Mention}: {display}");
+            builder.WithDescription($"{context.User.Mention}: {display}")
+                   .WithTitle(comment);
 
             return builder;    
         }

@@ -35,13 +35,14 @@ namespace DiscordBot.Commands
 
             if (RollParser.Check(rollText) != true)
             {
-                RollFormater.BadRollRequest(rollText, Context);
+                await RollFormater.BadRollRequest(rollText, this.Context);
             }
             else
             {
                 List<List<RollResult>> result = RollCommands.BuildAndRoll(rollText);
+                string comment = RollParser.GetComment(rollText);
 
-                await RollFormater.RollMessage(result, Context);
+                await RollFormater.RollMessage(result, comment, this.Context);
             }
         }
 

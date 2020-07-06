@@ -44,6 +44,10 @@ namespace ProjectInspirationLibrary.Dice.Parser
             return RollParser.ParseAndBuild(rollTable, signTable);
         }
 
+        /// <summary>
+        /// Returns the default roll for the roll command.
+        /// </summary>
+        /// <returns>A string with the default roll string.</returns>
         public static string Default()
         {
             return "1d20";
@@ -79,6 +83,22 @@ namespace ProjectInspirationLibrary.Dice.Parser
             // Regex for checking rolls text.
             string regex = @"^(?:(?:(?:\d+d\d+(?:\s(?:adv|dis|kh\d+|kl\d+))?|\d+)))(\s?\+\s?(?:(?:(?:\d+d\d+(?:\s(?:adv|dis|kh\d+|kl\d+))?|\d+))))*(?:\s?#.*)?$";
             return Regex.IsMatch(text.ToLower(CultureInfo.CurrentCulture), regex);
+        }
+
+        /// <summary>
+        /// Extracts the comment from a roll string.
+        /// </summary>
+        /// <param name="text">The string containing the roll. </param>
+        /// <returns>A string containing the comment.</returns>
+        public static string GetComment(string text)
+        {
+            if (text == null)
+            {
+                throw new ArgumentNullException(nameof(text));
+            }
+
+            var a = text.Split("#");
+            return a.Length > 1 ? a.ElementAt(1) : string.Empty;
         }
 
         /// <summary>
@@ -131,7 +151,7 @@ namespace ProjectInspirationLibrary.Dice.Parser
         /// <returns>The prepared string.</returns>
         private static string Prepare(string str)
         {
-            return str.Replace(" ", string.Empty, ignoreCase: false, culture: CultureInfo.CurrentCulture).ToLower(CultureInfo.CurrentCulture);
+            return str.Replace(" ", string.Empty, ignoreCase: false, culture: CultureInfo.CurrentCulture).ToLower(CultureInfo.CurrentCulture).Split('#').ElementAt(0);
         }
 
         /// <summary>
