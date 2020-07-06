@@ -14,7 +14,7 @@ namespace DiscordBot.Commands
     using Discord.Commands;
     using ProjectInspirationLibrary.Dice;
     using ProjectInspirationLibrary.Dice.Parser;
-    using ProjectInspirationLibrary.Flair.Comments;
+    using ProjectInspirationLibrary.Flair;
 
     /// <summary>
     /// Discord commands for rolling dice.
@@ -66,8 +66,9 @@ namespace DiscordBot.Commands
         }
 
         /// <summary>
-        /// Death Save Command. 
+        /// Death save command.
         /// </summary>
+        /// <param name="rollText">Text for the roll.</param>
         /// <returns>A Task.</returns>
         [Command("death"), Alias("dth"), Summary("Death Save")]
         public async Task Death([Remainder]string rollText = null)

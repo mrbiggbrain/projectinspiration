@@ -67,6 +67,7 @@ namespace DiscordBot
         /// Used to output a standard roll message to discord.
         /// </summary>
         /// <param name="result">The results of the rolls.</param>
+        /// <param name="comment">Comment for the roll.</param>
         /// <param name="context">The context for discord.</param>
         /// <returns>A task.</returns>
         public static async Task RollMessage(List<List<RollResult>> result, string comment, SocketCommandContext context)
@@ -81,6 +82,7 @@ namespace DiscordBot
         /// Generates a discord builder that can be sent via a message.
         /// </summary>
         /// <param name="result">The results of various rolls.</param>
+        /// <param name="comment">Comment for the roll.</param>
         /// <param name="context">The context of the original request.</param>
         /// <returns>A builder that is ready to be used.</returns>
         public static EmbedBuilder GenerateDiscordBuilder(List<List<RollResult>> result, string comment, SocketCommandContext context)
