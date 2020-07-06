@@ -8,8 +8,10 @@ namespace ProjectInspirationLibrary.Dice.Parser
 {
     using System;
     using System.Collections.Generic;
+    using System.Globalization;
     using System.Linq;
     using System.Text;
+    using System.Text.RegularExpressions;
     using ProjectInspirationLibrary.Dice.Filters;
 
     /// <summary>
@@ -24,6 +26,11 @@ namespace ProjectInspirationLibrary.Dice.Parser
         /// <returns>A {RollBuilder} containing the rolls represented by the string.</returns>
         public static RollBuilder Parse(string str)
         {
+            if (str == null)
+            {
+                throw new ArgumentNullException(nameof(str));
+            }
+
             // Prepare the string
             string preparedString = RollParser.Prepare(str);
 
@@ -35,6 +42,38 @@ namespace ProjectInspirationLibrary.Dice.Parser
 
             // Parse and construct the builder. 
             return RollParser.ParseAndBuild(rollTable, signTable);
+        }
+
+        /// <summary>
+        /// Returns the text for the roll or a default roll text.
+        /// </summary>
+        /// <param name="rollText">The text to check.</param>
+        /// <returns>The roll text back if valid, or a default roll.</returns>
+        public static string TextOrDefault(string rollText)
+        {
+            if (string.IsNullOrEmpty(rollText))
+            {
+                return "1d20";
+            }
+
+            return rollText;
+        }
+
+        /// <summary>
+        /// Checks if the text represents a valid roll string.
+        /// </summary>
+        /// <param name="text">String to check for validity.</param>
+        /// <returns>True on a valid string, false on an invalid string</returns>
+        public static bool Check(string text)
+        {
+            if (text == null)
+            {
+                throw new ArgumentNullException(nameof(text));
+            }
+
+            // Regex for checking rolls text.
+            string regex = @"^(?:(?:(?:\d+d\d+(?:\s(?:adv|dis|kh\d+|kl\d+))?|\d+)))(\s?\+\s?(?:(?:(?:\d+d\d+(?:\s(?:adv|dis|kh\d+|kl\d+))?|\d+))))*(?:\s?#.*)?$";
+            return Regex.IsMatch(text.ToLower(CultureInfo.CurrentCulture), regex);
         }
 
         /// <summary>
@@ -65,7 +104,7 @@ namespace ProjectInspirationLibrary.Dice.Parser
                 }
                 else if (filterType == FilterType.NONE)
                 {
-                    filterType = FilterType.KEEP_HIGH;
+                    filterType = FilterType.KEEPHIGH;
                     filterValue = count;
                 }
 
@@ -87,7 +126,7 @@ namespace ProjectInspirationLibrary.Dice.Parser
         /// <returns>The prepared string.</returns>
         private static string Prepare(string str)
         {
-            return str.Replace(" ", string.Empty).ToLower();
+            return str.Replace(" ", string.Empty, ignoreCase: false, culture: CultureInfo.CurrentCulture).ToLower(CultureInfo.CurrentCulture);
         }
 
         /// <summary>
@@ -135,19 +174,19 @@ namespace ProjectInspirationLibrary.Dice.Parser
         /// <returns>A tuple containing the actual roll text, the type of filter, and it's parameter.</returns>
         private static (string nakedRollText, FilterType filterType, int filterValue) PaseFilter(string v)
         {
-            if (v.Contains("kh"))
+            if (v.Contains("kh", StringComparison.Ordinal))
             {
                 throw new NotImplementedException();
             }
-            else if (v.Contains("kl"))
+            else if (v.Contains("kl", StringComparison.Ordinal))
             {
                 throw new NotImplementedException();
             }
-            else if (v.Contains("adv"))
+            else if (v.Contains("adv", StringComparison.Ordinal))
             {
                 return RollParser.Advantage(v);
             }
-            else if (v.Contains("dis"))
+            else if (v.Contains("dis", StringComparison.Ordinal))
             {
                 return RollParser.Disadvantage(v);
             }
@@ -195,11 +234,11 @@ namespace ProjectInspirationLibrary.Dice.Parser
             string text = string.Empty;
             int count = 0;
 
-            if (parts.Count() > 0)
+            if (parts.Length > 0)
             {
                 text = parts.ElementAt(0);
 
-                if (parts.Count() > 1)
+                if (parts.Length > 1)
                 {
                     if (int.TryParse(parts.ElementAt(1), out count))
                     {
@@ -246,21 +285,6 @@ namespace ProjectInspirationLibrary.Dice.Parser
             }
 
             return results;
-        }
-
-        /// <summary>
-        /// Returns the text for the roll or a default roll text.
-        /// </summary>
-        /// <param name="rollText">The text to check.</param>
-        /// <returns>The roll text back if valid, or a default roll.</returns>
-        public static string TextOrDefault(string rollText)
-        {
-            if (string.IsNullOrEmpty(rollText))
-            {
-                return "1d20";
-            }
-
-            return rollText;
-        }
+        } 
     }
 }

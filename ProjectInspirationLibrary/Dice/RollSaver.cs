@@ -42,7 +42,12 @@ namespace ProjectInspirationLibrary.Dice
         /// <returns>The loaded results.</returns>
         public List<List<RollResult>> Load(string name)
         {
-            this.prevRolls.TryGetValue(name, out List<List<RollResult>> results);
+            this.prevRolls.TryGetValue(name, out List<List<RollResult>>? results);
+
+            if (results == null)
+            {
+                throw new ArgumentOutOfRangeException(nameof(name));
+            }
 
             return results;
         }

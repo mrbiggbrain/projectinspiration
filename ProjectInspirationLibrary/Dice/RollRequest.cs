@@ -120,11 +120,11 @@ namespace ProjectInspirationLibrary.Dice
         /// <param name="filterValue">The parameter for the filter.</param>
         private static void ApplyFilters(List<RollResult> rolls, FilterType filterType, int filterValue)
         {
-            if (filterType == FilterType.KEEP_HIGH)
+            if (filterType == FilterType.KEEPHIGH)
             {
                 RollFilter.KeepHigh(rolls, filterValue);
             }
-            else if (filterType == FilterType.KEEP_LOW)
+            else if (filterType == FilterType.KEEPLOW)
             {
                 RollFilter.KeepLow(rolls, filterValue);
             }

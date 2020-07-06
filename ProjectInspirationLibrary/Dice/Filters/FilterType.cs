@@ -18,12 +18,12 @@ namespace ProjectInspirationLibrary.Dice.Filters
         /// <summary>
         /// X high rolls should be kept. 
         /// </summary>
-        KEEP_HIGH,
+        KEEPHIGH,
 
         /// <summary>
         /// X low rolls should be kept. 
         /// </summary>
-        KEEP_LOW,
+        KEEPLOW,
 
         /// <summary>
         /// Roll twice as many dice and keep high. 

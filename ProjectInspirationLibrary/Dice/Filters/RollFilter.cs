@@ -22,7 +22,12 @@ namespace ProjectInspirationLibrary.Dice.Filters
         /// <param name="rolls">The rolls to apply disadvantage to.</param>
         public static void Disadvantage(List<RollResult> rolls)
         {
-            var validCount = rolls.Count() / 2;
+            if (rolls == null)
+            {
+                throw new ArgumentNullException(nameof(rolls));
+            }
+
+            var validCount = rolls.Count / 2;
             var firstRoll = rolls.Take(validCount);
             var secondRoll = rolls.Skip(validCount).Take(validCount);
             var keepRoll = firstRoll.Sum(x => x.Result) <= secondRoll.Sum(x => x.Result) ? firstRoll : secondRoll;
@@ -39,7 +44,12 @@ namespace ProjectInspirationLibrary.Dice.Filters
         /// <param name="rolls">The rolls to apply advantage to.</param>
         public static void Advantage(List<RollResult> rolls)
         {
-            var validCount = rolls.Count() / 2;
+            if (rolls == null)
+            {
+                throw new ArgumentNullException(nameof(rolls));
+            }
+
+            var validCount = rolls.Count / 2;
             var firstRoll = rolls.Take(validCount);
             var secondRoll = rolls.Skip(validCount).Take(validCount);
             var keepRoll = firstRoll.Sum(x => x.Result) >= secondRoll.Sum(x => x.Result) ? firstRoll : secondRoll;
