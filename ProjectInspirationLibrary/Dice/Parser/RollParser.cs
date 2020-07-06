@@ -1,47 +1,69 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
+﻿//-----------------------------------------------------------------------
+// <copyright file="RollParser.cs" company="Project Inspiration">
+//     Copyright (c) Nicholas A Young. All rights reserved.
+// </copyright>
+// <author>Nicholas A. Young</author>
+//-----------------------------------------------------------------------
 namespace ProjectInspirationLibrary.Dice.Parser
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+    using System.Text;
+    using ProjectInspirationLibrary.Dice.Filters;
 
-    public enum FilterType { KEEP_HIGH, KEEP_LOW, ADVANTAGE, DISADVANTAGE, NONE}
-
+    /// <summary>
+    /// Static class for parsing text into RollBuilder objects. 
+    /// </summary>
     public static class RollParser
     {
-        public static RollBuilder Parse(String str)
+        /// <summary>
+        /// Process a string into a RollBuilder.
+        /// </summary>
+        /// <param name="str">The string to convert.</param>
+        /// <returns>A {RollBuilder} containing the rolls represented by the string.</returns>
+        public static RollBuilder Parse(string str)
         {
+            // Prepare the string
+            string preparedString = RollParser.Prepare(str);
 
-            String choppedRollText = str.Replace(" ", String.Empty).ToLower(); ;
+            // Parse Out Roll Signs
+            List<int> signTable = RollParser.GetSignTable(preparedString);
 
-            List<int> signTable = RollParser.GetSignTable(choppedRollText);
-            List<String> rollTable = RollParser.GetRollTextTable(choppedRollText);
+            // Parse out Roll Text
+            List<string> rollTable = RollParser.GetRollTextTable(preparedString);
 
+            // Parse and construct the builder. 
+            return RollParser.ParseAndBuild(rollTable, signTable);
+        }
+
+        /// <summary>
+        /// Constructs the {RollBuilder} from the list of rolls and signs.
+        /// </summary>
+        /// <param name="rollTable">A list of strings containing representations of requested rolls.</param>
+        /// <param name="signTable">A list of integers representing if the roll was added or subtracted.</param>
+        /// <returns>A {RollBuilder} containing the represented rolls.</returns>
+        private static RollBuilder ParseAndBuild(List<string> rollTable, List<int> signTable)
+        {
             RollBuilder builder = new RollBuilder();
 
-            for(int i = 0; i < rollTable.Count; i++)
+            for (int i = 0; i < rollTable.Count; i++)
             {
-
-                (String nakedRollText, FilterType filterType, int filterValue) = PaseFilter(rollTable[i]);
+                (string nakedRollText, FilterType filterType, int filterValue) = PaseFilter(rollTable[i]);
 
                 (int count, int sides) = ParseRollText(nakedRollText);
 
-                int KeepValue = count;
-
-                if(filterType == FilterType.ADVANTAGE)
+                if (filterType == FilterType.ADVANTAGE)
                 {
-                    filterType = FilterType.KEEP_HIGH;
                     filterValue = count;
                     count *= 2;
                 }
-                else if(filterType == FilterType.DISADVANTAGE)
+                else if (filterType == FilterType.DISADVANTAGE)
                 {
-                    filterType = FilterType.KEEP_LOW;
                     filterValue = count;
                     count *= 2;
                 }
-                else if(filterType == FilterType.NONE)
+                else if (filterType == FilterType.NONE)
                 {
                     filterType = FilterType.KEEP_HIGH;
                     filterValue = count;
@@ -49,27 +71,41 @@ namespace ProjectInspirationLibrary.Dice.Parser
 
                 RollRequest r = builder.AddRequest(signTable[i], count, sides, filterType, filterValue);
 
-                if(signTable[i] == -1)
+                if (signTable[i] == -1)
                 {
                     r.IsNeg();
                 }
             }
 
             return builder;
-            
         }
 
+        /// <summary>
+        /// Perform preparations and data formatting for later steps.
+        /// </summary>
+        /// <param name="str">The string to prepare.</param>
+        /// <returns>The prepared string.</returns>
+        private static string Prepare(string str)
+        {
+            return str.Replace(" ", string.Empty).ToLower();
+        }
+
+        /// <summary>
+        /// Convert a string to numerical representations for the number of dice and sides.
+        /// </summary>
+        /// <param name="v">The string representing the roll.</param>
+        /// <returns>A tuple with two integers representing the number of dice and their sides.</returns>
         private static (int count, int sides) ParseRollText(string v)
         {
-            String[] table = v.Split('d');
+            string[] table = v.Split('d');
 
             int count = 0;
             int sides = 20;
-            
+
             // Parse count
-            if(table.Length > 0)
+            if (table.Length > 0)
             {
-                if(Int32.TryParse(table[0], out count))
+                if (int.TryParse(table[0], out count))
                 {
                     // parsed;
                 }
@@ -77,7 +113,7 @@ namespace ProjectInspirationLibrary.Dice.Parser
                 // Parse sides
                 if (table.Length > 1)
                 {
-                    if (Int32.TryParse(table[1], out sides))
+                    if (int.TryParse(table[1], out sides))
                     {
                         // parsed;
                     }
@@ -89,11 +125,14 @@ namespace ProjectInspirationLibrary.Dice.Parser
                 }
             }
 
-            
-
             return (count, sides);
         }
 
+        /// <summary>
+        /// Parses the string to determine the filter applied and its parameters. 
+        /// </summary>
+        /// <param name="v">The string to parse.</param>
+        /// <returns>A tuple containing the actual roll text, the type of filter, and it's parameter.</returns>
         private static (string nakedRollText, FilterType filterType, int filterValue) PaseFilter(string v)
         {
             if (v.Contains("kh"))
@@ -106,19 +145,11 @@ namespace ProjectInspirationLibrary.Dice.Parser
             }
             else if (v.Contains("adv"))
             {
-                var parts = v.Split("adv");
-
-                String text = parts.ElementAt(0);
-
-                return (text, FilterType.ADVANTAGE, 0);
+                return RollParser.Advantage(v);
             }
-            else if(v.Contains("dis"))
+            else if (v.Contains("dis"))
             {
-                var parts = v.Split("dis");
-
-                String text = parts.ElementAt(0);
-
-                return (text, FilterType.DISADVANTAGE, 0);
+                return RollParser.Disadvantage(v);
             }
             else
             {
@@ -126,20 +157,92 @@ namespace ProjectInspirationLibrary.Dice.Parser
             }
         }
 
+        /// <summary>
+        /// Parses details for advantage.
+        /// </summary>
+        /// <param name="v">String to parse.</param>
+        /// <returns> Tuple containing the actual roll text, the type of filter, and it's parameter.</returns>
+        private static (string nakedRollText, FilterType filterType, int filterValue) Disadvantage(string v)
+        {
+            (string text, int _) = RollParser.ParseFilter(v, "dis");
+
+            return (text, FilterType.DISADVANTAGE, 0);
+        }
+
+        /// <summary>
+        /// Parse details for disadvantage.
+        /// </summary>
+        /// <param name="v">String to parse.</param>
+        /// <returns> tuple containing the actual roll text, the type of filter, and it's parameter.</returns>
+        private static (string nakedRollText, FilterType filterType, int filterValue) Advantage(string v)
+        {
+            (string text, int _) = RollParser.ParseFilter(v, "adv");
+
+            return (text, FilterType.ADVANTAGE, 0);
+        }
+
+        /// <summary>
+        /// Helper function to parse the left and right sides of given filter text.
+        /// </summary>
+        /// <param name="v">String to parse.</param>
+        /// <param name="t">Filter text to parse the left and right of.</param>
+        /// <returns>A tuple containing the text to the left and count to the right of given filter.</returns>
+        private static (string text, int count) ParseFilter(string v, string t)
+        {
+            // Split the parts
+            var parts = v.Split(t);
+
+            string text = string.Empty;
+            int count = 0;
+
+            if (parts.Count() > 0)
+            {
+                text = parts.ElementAt(0);
+
+                if (parts.Count() > 1)
+                {
+                    if (int.TryParse(parts.ElementAt(1), out count))
+                    {
+                        // parsed;
+                    }
+                }
+            }
+
+            return (text, count);
+        }
+
+        /// <summary>
+        /// Splits the text on operator boundaries.
+        /// </summary>
+        /// <param name="str">The string to break into rolls.</param>
+        /// <returns>A list of each roll in string format.</returns>
         private static List<string> GetRollTextTable(string str)
         {
             return str.Split(new char[] { '+', '-' }).ToList();
         }
 
+        /// <summary>
+        /// Generates a table for the sign of each roll in the given string.
+        /// </summary>
+        /// <param name="str">The string to generate a sign table for.</param>
+        /// <returns>A list of integers containing the generated sign table.</returns>
         private static List<int> GetSignTable(string str)
         {
-            List<int> results = new List<int>();
-            results.Add(1);
-
-            for(int i = 0; i < str.Length; i++)
+            List<int> results = new List<int>
             {
-                if (str[i] == '+') results.Add(1);
-                else if (str[i] == '-') results.Add(-1);
+                1
+            };
+
+            for (int i = 0; i < str.Length; i++)
+            {
+                if (str[i] == '+')
+                {
+                    results.Add(1);
+                }
+                else if (str[i] == '-')
+                {
+                    results.Add(-1);
+                }
             }
 
             return results;

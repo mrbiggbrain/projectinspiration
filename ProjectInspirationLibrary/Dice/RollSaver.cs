@@ -1,43 +1,48 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
+﻿//-----------------------------------------------------------------------
+// <copyright file="RollSaver.cs" company="Project Inspiration">
+//     Copyright (c) Nicholas A Young. All rights reserved.
+// </copyright>
+// <author>Nicholas A. Young</author>
+//-----------------------------------------------------------------------
 namespace ProjectInspirationLibrary.Dice
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Text;
+
+    /// <summary>
+    /// Class used to save rolls to be recalled later.
+    /// </summary>
     public sealed class RollSaver
     {
-        private static readonly RollSaver instance = new RollSaver();
+        /// <summary>
+        /// Holds a list of previous rolls for players.
+        /// </summary>
+        private readonly Dictionary<string, List<List<RollResult>>> prevRolls = new Dictionary<string, List<List<RollResult>>>();
 
-        private Dictionary<String,List<List<RollResult>>> prevRolls = new Dictionary<string, List<List<RollResult>>>();
+        /// <summary>
+        /// Gets a singleton instance for the class. 
+        /// </summary>
+        public static RollSaver Instance { get; } = new RollSaver();
 
-        // Explicit static constructor to tell C# compiler
-        // not to mark type as beforefieldinit
-        static RollSaver()
-        {
-        }
-
-        private RollSaver()
-        {
-        }
-
-        public static RollSaver Instance
-        {
-            get
-            {
-                return instance;
-            }
-        }
-
-        public void Save(String name, List<List<RollResult>> rolls)
+        /// <summary>
+        /// Saves a roll to the in-memory array. 
+        /// </summary>
+        /// <param name="name">Name to use for lookup later..</param>
+        /// <param name="rolls">The results to save.</param>
+        public void Save(string name, List<List<RollResult>> rolls)
         {
             this.prevRolls[name] = rolls;
         }
 
-        public List<List<RollResult>> Load(String name)
+        /// <summary>
+        /// Loads a roll from the in-memory array.
+        /// </summary>
+        /// <param name="name">Name to use for lookup.</param>
+        /// <returns>The loaded results.</returns>
+        public List<List<RollResult>> Load(string name)
         {
-            List<List<RollResult>> results = null;
-
-            this.prevRolls.TryGetValue(name, out results);
+            this.prevRolls.TryGetValue(name, out List<List<RollResult>> results);
 
             return results;
         }
