@@ -247,5 +247,20 @@ namespace ProjectInspirationLibrary.Dice.Parser
 
             return results;
         }
+
+        /// <summary>
+        /// Returns the text for the roll or a default roll text.
+        /// </summary>
+        /// <param name="rollText">The text to check.</param>
+        /// <returns>The roll text back if valid, or a default roll.</returns>
+        public static string TextOrDefault(string rollText)
+        {
+            if (string.IsNullOrEmpty(rollText))
+            {
+                return "1d20";
+            }
+
+            return rollText;
+        }
     }
 }

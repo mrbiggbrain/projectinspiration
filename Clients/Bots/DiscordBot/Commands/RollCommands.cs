@@ -28,7 +28,7 @@ namespace DiscordBot.Commands
         [Command("roll"), Alias("r"), Summary("Roll Command")]
         public async Task Roll([Remainder]string rollText = null)
         {
-            rollText = RollCommands.TextOrDefault(rollText);
+            rollText = RollParser.TextOrDefault(rollText);
 
             List<List<RollResult>> result = RollCommands.BuildAndRoll(rollText);
 
@@ -85,21 +85,6 @@ namespace DiscordBot.Commands
             builder.WithDescription($"{Context.User.Mention}: {total} = {status}");
 
             await Context.Channel.SendMessageAsync(string.Empty, embed: builder.Build());
-        }
-
-        /// <summary>
-        /// Returns the text for the roll or a default roll text.
-        /// </summary>
-        /// <param name="rollText">The text to check.</param>
-        /// <returns>The roll text back if valid, or a default roll.</returns>
-        private static string TextOrDefault(string rollText)
-        {
-            if (string.IsNullOrEmpty(rollText))
-            {
-                return "1d20";
-            }
-
-            return rollText;
         }
 
         /// <summary>
