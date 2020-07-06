@@ -10,6 +10,7 @@ namespace DiscordBot
     using System.Collections.Generic;
     using System.Linq;
     using System.Text;
+    using System.Threading.Tasks;
     using Discord;
     using Discord.Commands;
     using ProjectInspirationLibrary.Dice;
@@ -37,6 +38,33 @@ namespace DiscordBot
             var setsText = string.Join(", ", setsTextList);
 
             return $"{setsText} = {totalSum}";
+        }
+
+        public static async Task BadRollRequest(string rollText, SocketCommandContext context)
+        {
+
+            // Create a builder to construct the output. 
+            EmbedBuilder builder = new EmbedBuilder();
+
+            // Set author and image
+            builder.WithAuthor("Dice Roller", "https://cdn.pixabay.com/photo/2017/02/12/21/29/false-2061132_960_720.png");
+
+            // Set outline to be red.
+            builder.WithColor(Color.DarkOrange);
+
+            // Set the description to show results. 
+            builder.WithDescription($"{context.User.Mention}: **{rollText}** does not look like a valid roll.");
+
+            await context.Channel.SendMessageAsync(string.Empty, embed: builder.Build());
+
+        }
+
+        public static async Task RollMessage(List<List<RollResult>> result, SocketCommandContext context)
+        {
+            EmbedBuilder builder = RollFormater.GenerateDiscordBuilder(result, context);
+
+            // Post the embed to the channel
+            await context.Channel.SendMessageAsync(string.Empty, embed: builder.Build());
         }
 
         /// <summary>

@@ -44,6 +44,11 @@ namespace ProjectInspirationLibrary.Dice.Parser
             return RollParser.ParseAndBuild(rollTable, signTable);
         }
 
+        public static string Default()
+        {
+            return "1d20";
+        }
+
         /// <summary>
         /// Returns the text for the roll or a default roll text.
         /// </summary>

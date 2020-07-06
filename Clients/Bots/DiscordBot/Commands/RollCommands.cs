@@ -28,17 +28,21 @@ namespace DiscordBot.Commands
         [Command("roll"), Alias("r"), Summary("Roll Command")]
         public async Task Roll([Remainder]string rollText = null)
         {
-            rollText = RollParser.TextOrDefault(rollText);
+            if (rollText == null)
+            {
+                rollText = RollParser.Default();
+            }
 
-            List<List<RollResult>> result = RollCommands.BuildAndRoll(rollText);
+            if (RollParser.Check(rollText) != true)
+            {
+                RollFormater.BadRollRequest(rollText, Context);
+            }
+            else
+            {
+                List<List<RollResult>> result = RollCommands.BuildAndRoll(rollText);
 
-            EmbedBuilder builder = RollFormater.GenerateDiscordBuilder(result, Context);
-
-            // Post the embed to the channel
-            await Context.Channel.SendMessageAsync(string.Empty, embed: builder.Build());
-
-            // Delete the requesting message
-            // await Context.Message.DeleteAsync();
+                await RollFormater.RollMessage(result, Context);
+            }
         }
 
         /// <summary>
